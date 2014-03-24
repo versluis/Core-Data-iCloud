@@ -117,9 +117,15 @@
     
     NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"CDi.sqlite"];
     
+    // creating CloudStore URL and title
+    NSURL *cloudURL = [self grabCloudPath:@"CloudLogs"];
+    NSString *cloudStoreTitle = @"CDi";
+    NSDictionary *options = @{NSPersistentStoreUbiquitousContentURLKey: cloudURL,
+                              NSPersistentStoreUbiquitousContentNameKey: cloudStoreTitle};
+    
     NSError *error = nil;
     _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
+    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
         /*
          Replace this implementation with code to handle the error appropriately.
          
@@ -156,6 +162,22 @@
 - (NSURL *)applicationDocumentsDirectory
 {
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+}
+
+// Returns the URL to our Ubiquity Folder
+- (NSURL *)grabCloudPath:(NSString *)filename {
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *teamID = @"F34HMY85N9"; // replace with your real Team ID
+    NSString *bundleID = [[NSBundle mainBundle]bundleIdentifier];
+    NSString *cloudRoot = [NSString stringWithFormat:@"%@.%@", teamID, bundleID];
+    
+    NSURL *cloudRootURL = [fileManager URLForUbiquityContainerIdentifier:cloudRoot];
+    
+    NSString *pathToCloudFile = [[cloudRootURL path]stringByAppendingPathComponent:@"Documents"];
+    pathToCloudFile = [pathToCloudFile stringByAppendingPathComponent:filename];
+    
+    return [NSURL fileURLWithPath:pathToCloudFile];
 }
 
 @end

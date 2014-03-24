@@ -29,11 +29,21 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    self.navigationItem.leftBarButtonItem = self.editButtonItem;
+    // self.navigationItem.leftBarButtonItem = self.editButtonItem;
 
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
     self.navigationItem.rightBarButtonItem = addButton;
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    
+    // observer for store changes (perhaps in viewDidLoad)
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(contentDidChange:) name:NSPersistentStoreDidImportUbiquitousContentChangesNotification object:self.managedObjectContext.persistentStoreCoordinator];
+    
+}
+
+- (void)contentDidChange:(NSNotification *)notification {
+    
+    // merge those changes
+    [self.managedObjectContext mergeChangesFromContextDidSaveNotification:notification];
 }
 
 - (void)didReceiveMemoryWarning
