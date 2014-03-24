@@ -168,7 +168,7 @@
 - (NSURL *)grabCloudPath:(NSString *)filename {
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *teamID = @"F34HMY85N9"; // replace with your real Team ID
+    NSString *teamID = @"ABCDEF1234"; // replace with your real Team ID
     NSString *bundleID = [[NSBundle mainBundle]bundleIdentifier];
     NSString *cloudRoot = [NSString stringWithFormat:@"%@.%@", teamID, bundleID];
     
